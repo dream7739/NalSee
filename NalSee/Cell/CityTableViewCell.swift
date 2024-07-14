@@ -16,7 +16,6 @@ final class CityTableViewCell: BaseTableViewCell {
         return label
     }()
     
-    
     let countryLabel = {
         let label = UILabel()
         label.font = Font.tertiary

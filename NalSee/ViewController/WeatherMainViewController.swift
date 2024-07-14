@@ -84,6 +84,7 @@ final class WeatherMainViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
+        APIManager.shared.callForecast(lat: 37.572601, lon: 126.979289)
     }
     
     override func configureHierarchy() {

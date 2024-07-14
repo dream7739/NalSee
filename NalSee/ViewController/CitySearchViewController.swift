@@ -40,11 +40,16 @@ extension CitySearchViewController {
     func bind(_ viewModel: CitySearchViewModel){
         viewModel.getCellData().bind(to: tableView.rx.items){
             (tableView: UITableView, index: Int, element: City) -> UITableViewCell in
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: CityTableViewCell.reuseIdentifier) as? CityTableViewCell 
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: CityTableViewCell.reuseIdentifier) as? CityTableViewCell
             else { fatalError() }
             cell.cityLabel.text = element.name
             cell.countryLabel.text = element.country
             return cell
+        }.disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected.bind{ [weak self] indexPath in
+            let mainVC = WeatherMainViewController()
+            self?.navigationController?.pushViewController(mainVC, animated: true)
         }.disposed(by: disposeBag)
     }
 }

@@ -32,16 +32,12 @@ final class WeatherMainViewController: BaseViewController {
     
     
     let dummyWeekWeather: [WeekWeather] = [
-        WeekWeather(weekDay: "오늘", weather: UIImage(systemName: "heart.fill")!, lowTemp: "최저 -2", highTemp: "최고 9"),
-        WeekWeather(weekDay: "목", weather: UIImage(systemName: "heart.fill")!, lowTemp: "최저 -3", highTemp: "최고 10"),
-        WeekWeather(weekDay: "금", weather: UIImage(systemName: "heart.fill")!, lowTemp: "최저 -4", highTemp: "최고 11"),
-        WeekWeather(weekDay: "토", weather: UIImage(systemName: "heart.fill")!, lowTemp: "최저 -5", highTemp: "최고 12"),
-        WeekWeather(weekDay: "일", weather: UIImage(systemName: "heart.fill")!, lowTemp: "최저 -2", highTemp: "최고 13"),
-        WeekWeather(weekDay: "월", weather: UIImage(systemName: "heart.fill")!, lowTemp: "최저 -2", highTemp: "최고 9"),
-        WeekWeather(weekDay: "화", weather: UIImage(systemName: "heart.fill")!, lowTemp: "최저 -2", highTemp: "최고 9"),
-        WeekWeather(weekDay: "수", weather: UIImage(systemName: "heart.fill")!, lowTemp: "최저 -2", highTemp: "최고 9"),
-        WeekWeather(weekDay: "목", weather: UIImage(systemName: "heart.fill")!, lowTemp: "최저 -2", highTemp: "최고 9"),
-        WeekWeather(weekDay: "금", weather: UIImage(systemName: "heart.fill")!, lowTemp: "최저 -2", highTemp: "최고 9"),
+        WeekWeather(weekDay: "오늘", weather: "heart.fill", lowTemp: "최저 -2", highTemp: "최고 9"),
+        WeekWeather(weekDay: "목", weather: "heart.fill", lowTemp: "최저 -3", highTemp: "최고 10"),
+        WeekWeather(weekDay: "금", weather: "heart.fill", lowTemp: "최저 -4", highTemp: "최고 11"),
+        WeekWeather(weekDay: "토", weather: "heart.fill", lowTemp: "최저 -5", highTemp: "최고 12"),
+        WeekWeather(weekDay: "일", weather: "heart.fill", lowTemp: "최저 -2", highTemp: "최고 13"),
+        WeekWeather(weekDay: "월", weather: "heart.fill", lowTemp: "최저 -2", highTemp: "최고 9")
     ]
     
     let dummyLocation: [LocWeather] = [LocWeather(lat:  37.572601, lon: 126.979289)]
@@ -97,8 +93,14 @@ final class WeatherMainViewController: BaseViewController {
             print("통신 완료!")
         })
         
-        viewModel.outputThreeOurResult.bind { value in
-            self.snapshot.appendSections([.detail])
+        viewModel.outputThreeHourResult.bind { value in
+            self.snapshot.appendSections([.hour])
+            self.snapshot.appendItems(value)
+            self.dataSource.apply(self.snapshot)
+        }
+        
+        viewModel.outputFiveDayResult.bind { value in
+            self.snapshot.appendSections([.week])
             self.snapshot.appendItems(value)
             self.dataSource.apply(self.snapshot)
         }
@@ -197,10 +199,7 @@ extension WeatherMainViewController {
         }
         
         let weekCellRegisteration = UICollectionView.CellRegistration<WeekCastCollectionViewCell, WeekWeather>.init { cell, indexPath, itemIdentifier in
-            cell.weekDayLabel.text = itemIdentifier.weekDay
-            cell.weatherImage.image = itemIdentifier.weather
-            cell.lowTempLabel.text = itemIdentifier.lowTemp
-            cell.highTempLabel.text = itemIdentifier.highTemp
+            cell.configureData(itemIdentifier)
         }
         
         let locationCellRegisteration = UICollectionView.CellRegistration<LocationCollectionViewCell, LocWeather>.init { cell, indexPath, itemIdentifier in

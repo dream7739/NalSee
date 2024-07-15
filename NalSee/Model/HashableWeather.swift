@@ -8,14 +8,16 @@
 import UIKit
 
 struct HourWeather: Hashable {
+    let id = UUID()
     let hour: String
     let weather: String
     let temp: String
 }
 
 struct WeekWeather: Hashable {
+    let id = UUID()
     let weekDay: String
-    let weather: UIImage
+    let weather: String
     let lowTemp: String
     let highTemp: String
 }

@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 import SnapKit
 
 final class WeekCastCollectionViewCell: BaseCollectionViewCell {
@@ -13,7 +14,7 @@ final class WeekCastCollectionViewCell: BaseCollectionViewCell {
     let weatherImage = UIImageView()
     let lowTempLabel = UILabel()
     let highTempLabel = UILabel()
-
+    
     override func configureHierarchy() {
         contentView.addSubview(weekDayLabel)
         contentView.addSubview(weatherImage)
@@ -41,7 +42,7 @@ final class WeekCastCollectionViewCell: BaseCollectionViewCell {
             make.centerY.equalTo(contentView.safeAreaLayoutGuide)
             make.trailing.equalTo(contentView.safeAreaLayoutGuide)
         }
-
+        
     }
     
     override func configureUI() {
@@ -50,9 +51,20 @@ final class WeekCastCollectionViewCell: BaseCollectionViewCell {
         
         lowTempLabel.textColor = .darkGray
         lowTempLabel.font = .systemFont(ofSize: 18)
-
+        
         highTempLabel.textColor = .white
         highTempLabel.font = .systemFont(ofSize: 18)
-
+        
+    }
+    
+    func configureData(_ data: WeekWeather){
+        weekDayLabel.text = data.weekDay
+        
+        let url = APIURL.weatherIcon + "/\(data.weather)@2x.png"
+        guard let imageURL = URL(string: url) else { return }
+        weatherImage.kf.setImage(with: imageURL)
+        
+        lowTempLabel.text = data.lowTemp
+        highTempLabel.text = data.highTemp
     }
 }

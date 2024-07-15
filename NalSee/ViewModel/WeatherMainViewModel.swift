@@ -20,7 +20,9 @@ final class WeatherMainViewModel {
         )
     )
     
-    var outputThreeOurResult: CObservable<[HourWeather]> = CObservable([])
+    var outputThreeHourResult: CObservable<[HourWeather]> = CObservable([])
+    
+    var outputFiveDayResult: CObservable<[WeekWeather]> = CObservable([])
     
     func getWeatherResult(){
         APIManager.shared.callForecast(lat: 37.572601, lon: 126.979289, completion: {
@@ -29,6 +31,7 @@ final class WeatherMainViewModel {
             case .success(let value):
                 self.outputWeatherResult.value = value
                 self.getThreeHourResult()
+                self.getFiveDaysResult()
             case .failure(let error):
                 print(error)
             }
@@ -64,10 +67,53 @@ final class WeatherMainViewModel {
             list.append(hourWeather)
         }
        
-       
-        outputThreeOurResult.value = list
-        
+        outputThreeHourResult.value = list
     }
     
+    func getFiveDaysResult(){
+        var list: [WeekWeather] = []
+        
+        let day1 = Calendar.current.startOfDay(for: Date())
+        let day2 = Calendar.current.date(byAdding: .day, value: 1, to: day1)!
+        let day3 = Calendar.current.date(byAdding: .day, value: 2, to: day1)!
+        let day4 = Calendar.current.date(byAdding: .day, value: 3, to: day1)!
+        let day5 = Calendar.current.date(byAdding: .day, value: 4, to: day1)!
+        let day6 = Calendar.current.date(byAdding: .day, value: 5, to: day1)!
+
+        let day = [day1, day2, day3, day4, day5, day6]
+        
+        for i in 0..<5 {
+            let dayWeather = outputWeatherResult.value.list.filter {
+                $0.dt >= Int(day[i].timeIntervalSince1970) && $0.dt < Int(day[i+1].timeIntervalSince1970)
+            }
+            
+            let maxTemp = dayWeather.max {
+                $0.main.temp_max > $1.main.temp_max
+            }?.main.temp_max ?? 0
+            
+            let minTemp = dayWeather.min {
+                $0.main.temp_min < $1.main.temp_min
+            }?.main.temp_min ?? 0
+            
+            let maxCelsius = UnitTemperature.celsius.converter.value(fromBaseUnitValue: maxTemp)
+            let maxCelsiusStr = String(format: "%.f", maxCelsius) + "°"
+            
+            let minCelsius = UnitTemperature.celsius.converter.value(fromBaseUnitValue: minTemp)
+            let minCelsiusStr = String(format: "%.f", minCelsius) + "°"
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "EEEEE"
+            let weekDayStr = dateFormatter.string(from: day[i])
+            
+            let weatherIcon = dayWeather.first?.weather.first?.icon ?? ""
+            
+            let weatherItem = WeekWeather(weekDay: weekDayStr, weather: weatherIcon, lowTemp: minCelsiusStr, highTemp: maxCelsiusStr)
+            
+            list.append(weatherItem)
+            
+        }
+        outputFiveDayResult.value = list
+
+    }
     
 }

@@ -1,0 +1,32 @@
+//
+//  HashableWeather.swift
+//  NalSee
+//
+//  Created by 홍정민 on 7/14/24.
+//
+
+import UIKit
+
+struct HourWeather: Hashable {
+    let hour: String
+    let weather: String
+    let temp: String
+}
+
+struct WeekWeather: Hashable {
+    let weekDay: String
+    let weather: UIImage
+    let lowTemp: String
+    let highTemp: String
+}
+
+
+struct LocWeather: Hashable {
+    let lat: Double
+    let lon: Double
+}
+
+struct DetailWeather: Hashable {
+    let title: String
+    let detail: String
+}

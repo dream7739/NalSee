@@ -6,7 +6,9 @@
 //
 
 import UIKit
+import RxSwift
 import SnapKit
+
 
 final class WeatherMainViewController: BaseViewController {
     
@@ -15,40 +17,17 @@ final class WeatherMainViewController: BaseViewController {
     let headerView = WeatherMainHeaderView()
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
-    
-    struct HourWeather: Hashable {
-        let hour: String
-        let weather: UIImage
-        let temp: String
-    }
-    
-    
-    struct WeekWeather: Hashable {
-        let weekDay: String
-        let weather: UIImage
-        let lowTemp: String
-        let highTemp: String
-    }
-    
-    
-    struct LocWeather: Hashable {
-        let lat: Double
-        let lon: Double
-    }
-    
-    struct DetailWeather: Hashable {
-        let title: String
-        let detail: String
-    }
+    var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+    let viewModel = WeatherMainViewModel()
     
     typealias Item = AnyHashable
     
     let dummyWeather: [HourWeather] = [
-        HourWeather(hour: "11", weather: UIImage(systemName: "heart.fill")!, temp: "14"),
-        HourWeather(hour: "13", weather: UIImage(systemName: "heart.fill")!, temp: "16"),
-        HourWeather(hour: "15", weather: UIImage(systemName: "heart.fill")!, temp: "18"),
-        HourWeather(hour: "17", weather: UIImage(systemName: "heart.fill")!, temp: "20"),
-        HourWeather(hour: "19", weather: UIImage(systemName: "heart.fill")!, temp: "22")
+        HourWeather(hour: "11", weather: "heart.fill", temp: "14"),
+        HourWeather(hour: "13", weather: "heart.fill", temp: "16"),
+        HourWeather(hour: "15", weather: "heart.fill", temp: "18"),
+        HourWeather(hour: "17", weather: "heart.fill", temp: "20"),
+        HourWeather(hour: "19", weather: "heart.fill", temp: "22")
     ]
     
     
@@ -84,7 +63,7 @@ final class WeatherMainViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
-        APIManager.shared.callForecast(lat: 37.572601, lon: 126.979289)
+        bind()
     }
     
     override func configureHierarchy() {
@@ -111,6 +90,20 @@ final class WeatherMainViewController: BaseViewController {
         collectionView.backgroundColor = .black
     }
     
+    func bind(){
+        viewModel.getWeatherResult()
+        
+        viewModel.outputWeatherResult.bind({ value in
+            print("통신 완료!")
+        })
+        
+        viewModel.outputThreeOurResult.bind { value in
+            self.snapshot.appendSections([.detail])
+            self.snapshot.appendItems(value)
+            self.dataSource.apply(self.snapshot)
+        }
+        
+    }
     
 }
 
@@ -194,15 +187,13 @@ extension WeatherMainViewController {
         let config = UICollectionViewCompositionalLayoutConfiguration()
         config.interSectionSpacing = 10
         layout.configuration = config
-
+        
         return layout
     }
     
     func configureDataSource(){
         let hourCellRegisteration = UICollectionView.CellRegistration<HourCastCollectionViewCell, HourWeather>.init { cell, indexPath, itemIdentifier in
-            cell.hourLabel.text = itemIdentifier.hour
-            cell.weatherImage.image = itemIdentifier.weather
-            cell.tempLabel.text = itemIdentifier.temp
+            cell.configureData(itemIdentifier)
         }
         
         let weekCellRegisteration = UICollectionView.CellRegistration<WeekCastCollectionViewCell, WeekWeather>.init { cell, indexPath, itemIdentifier in
@@ -229,19 +220,19 @@ extension WeatherMainViewController {
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             switch Section.allCases[indexPath.section]{
             case .hour:
-                guard let item = itemIdentifier as? WeatherMainViewController.HourWeather  else { return UICollectionViewCell() }
+                guard let item = itemIdentifier as? HourWeather  else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueConfiguredReusableCell(using: hourCellRegisteration, for: indexPath, item: item)
                 return cell
             case .week:
-                guard let item = itemIdentifier as? WeatherMainViewController.WeekWeather  else { return UICollectionViewCell() }
+                guard let item = itemIdentifier as? WeekWeather  else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueConfiguredReusableCell(using: weekCellRegisteration, for: indexPath, item: item)
                 return cell
             case .location:
-                guard let item = itemIdentifier as? WeatherMainViewController.LocWeather  else { return UICollectionViewCell() }
+                guard let item = itemIdentifier as? LocWeather  else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueConfiguredReusableCell(using: locationCellRegisteration, for: indexPath, item: item)
                 return cell
             case .detail:
-                guard let item = itemIdentifier as? WeatherMainViewController.DetailWeather  else { return UICollectionViewCell() }
+                guard let item = itemIdentifier as? DetailWeather  else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueConfiguredReusableCell(using: detailCellRegisteration, for: indexPath, item: item)
                 return cell
             }
@@ -257,14 +248,13 @@ extension WeatherMainViewController {
             }
         }
         
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([.hour, .week, .location, .detail])
-        snapshot.appendItems(dummyWeather, toSection: .hour)
-        snapshot.appendItems(dummyWeekWeather, toSection: .week)
-        snapshot.appendItems(dummyLocation, toSection: .location)
-        snapshot.appendItems(dummyDetail, toSection: .detail)
-
-        dataSource.apply(snapshot)
+//        snapshot.appendSections([.hour, .week, .location, .detail])
+//        snapshot.appendItems(dummyWeather, toSection: .hour)
+//        snapshot.appendItems(dummyWeekWeather, toSection: .week)
+//        snapshot.appendItems(dummyLocation, toSection: .location)
+//        snapshot.appendItems(dummyDetail, toSection: .detail)
+//        
+//        dataSource.apply(snapshot)
         
     }
 }

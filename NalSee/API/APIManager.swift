@@ -11,16 +11,19 @@ import Alamofire
 final class APIManager {
     static let shared = APIManager()
     
-    func callForecast(lat: Double, lon: Double){
+    func callForecast(lat: Double, lon: Double, completion: @escaping (Result<WeatherResult, AFError>) -> Void){
         let url = APIURL.weather + "?lat=\(lat)&lon=\(lon)&appid=\(APIKey.id)"
         
         AF.request(url, method: .get).responseDecodable(of: WeatherResult.self) { response in
             switch response.result {
             case .success(let value):
-                print(value)
+                completion(.success(value))
             case .failure(let error):
                 print(error)
+                completion(.failure(error))
             }
         }
+        
+        
     }
 }

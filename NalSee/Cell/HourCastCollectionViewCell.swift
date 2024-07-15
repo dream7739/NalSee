@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 import SnapKit
 
 final class HourCastCollectionViewCell: BaseCollectionViewCell {
@@ -41,5 +42,15 @@ final class HourCastCollectionViewCell: BaseCollectionViewCell {
         contentView.backgroundColor = .black
         hourLabel.textColor = .white
         tempLabel.textColor = .white
+    }
+    
+    func configureData(_ data: HourWeather){
+        hourLabel.text = data.hour
+        
+        let url = APIURL.weatherIcon + "/\(data.weather)@2x.png"
+        guard let imageURL = URL(string: url) else { return }
+        weatherImage.kf.setImage(with: imageURL)
+        
+        tempLabel.text = data.temp
     }
 }

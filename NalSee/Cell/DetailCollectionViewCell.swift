@@ -44,7 +44,13 @@ final class DetailCollectionViewCell: BaseCollectionViewCell {
         titleLabel.font = .systemFont(ofSize: 12)
         
         descriptionLabel.textColor = .white
-        descriptionLabel.font = .systemFont(ofSize: 30, weight: .semibold)
+        descriptionLabel.font = .systemFont(ofSize: 23, weight: .medium)
         
+    }
+    
+    func configureData(_ data: DetailWeather){
+        weatherImage.image = UIImage(systemName: "wind")
+        titleLabel.text = data.title
+        descriptionLabel.text = data.detail
     }
 }

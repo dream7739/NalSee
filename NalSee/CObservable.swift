@@ -8,13 +8,13 @@
 import Foundation
 
 class CObservable<T> {
+    var closure: ((T) -> Void)?
+    
     var value: T {
         didSet {
             closure?(value)
         }
     }
-    
-    var closure: ((T) -> Void)?
     
     init(_ value: T) {
         self.value = value

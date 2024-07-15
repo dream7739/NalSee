@@ -14,22 +14,11 @@ final class WeatherMainViewController: BaseViewController {
     
     static let tempSectionHeader = "tempSectionHeader"
     
-    
     let headerView = WeatherMainHeaderView()
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
-    var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
     
     let viewModel = WeatherMainViewModel()
-    
-    let dummyLocation: [LocWeather] = [LocWeather(lat:  37.572601, lon: 126.979289)]
-    
-    let dummyDetail: [DetailWeather] = [
-        DetailWeather(title: "바람속도", detail: "1.35m/s"),
-        DetailWeather(title: "구름", detail: "50%"),
-        DetailWeather(title: "기압", detail: "102hpa"),
-        DetailWeather(title: "습도", detail: "73%")
-    ]
     
     typealias Item = AnyHashable
     
@@ -66,37 +55,46 @@ final class WeatherMainViewController: BaseViewController {
     }
     
     override func configureUI() {
-        headerView.setData()
         collectionView.backgroundColor = .black
         
     }
     
     func bind(){
         viewModel.getWeatherResult()
+        viewModel.getCurrentWeatherResult()
         
-        viewModel.outputWeatherResult.bind{ value in
-            
-            
+        viewModel.outputCurrentWeatherResult.bind { value in
+            guard let value else { return }
+            self.headerView.configureData(value)
         }
-
+        
         viewModel.outputThreeHourResult.bind { value in
-            self.snapshot.appendSections([.hour])
-            self.snapshot.appendItems(value)
-            self.dataSource.apply(self.snapshot)
+            var snapshot = self.dataSource.snapshot()
+            snapshot.appendSections([.hour])
+            snapshot.appendItems(value)
+            self.dataSource.apply(snapshot)
         }
         
         viewModel.outputFiveDayResult.bind { value in
-            self.snapshot.appendSections([.week])
-            self.snapshot.appendItems(value)
-            self.dataSource.apply(self.snapshot)
+            var snapshot = self.dataSource.snapshot()
+            snapshot.appendSections([.week])
+            snapshot.appendItems(value)
+            self.dataSource.apply(snapshot)
         }
         
         viewModel.outputLocationResult.bind { value in
-            self.snapshot.appendSections([.location])
-            self.snapshot.appendItems(value)
-            self.dataSource.apply(self.snapshot)
+            var snapshot = self.dataSource.snapshot()
+            snapshot.appendSections([.location])
+            snapshot.appendItems(value)
+            self.dataSource.apply(snapshot)
         }
         
+        viewModel.outputDetailResult.bind { value in
+            var snapshot = self.dataSource.snapshot()
+            snapshot.appendSections([.detail])
+            snapshot.appendItems(value)
+            self.dataSource.apply(snapshot)
+        }
     }
     
 }
@@ -106,7 +104,7 @@ extension WeatherMainViewController {
         let layout = UICollectionViewCompositionalLayout{ section, env in
             switch Section.allCases[section] {
             case .hour:
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.18), heightDimension: .fractionalHeight(1.0))
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.2), heightDimension: .fractionalHeight(1.0))
                 
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
@@ -115,7 +113,7 @@ extension WeatherMainViewController {
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
-                section.orthogonalScrollingBehavior = .continuous //좌우 스크롤이 가능하게 함
+                section.orthogonalScrollingBehavior = .continuous
                 section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
                 
                 let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
@@ -163,11 +161,11 @@ extension WeatherMainViewController {
                 
                 return section
             case .detail:
-                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .absolute(100))
+                let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalWidth(0.5))
                 
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
-                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(200))
+                let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(150))
                 
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
@@ -186,7 +184,6 @@ extension WeatherMainViewController {
     }
     
     func configureDataSource(){
-        print(#function)
         let hourCellRegisteration = UICollectionView.CellRegistration<HourCastCollectionViewCell, HourWeather>.init { cell, indexPath, itemIdentifier in
             cell.configureData(itemIdentifier)
         }
@@ -200,9 +197,7 @@ extension WeatherMainViewController {
         }
         
         let detailCellRegisteration = UICollectionView.CellRegistration<DetailCollectionViewCell, DetailWeather>.init { cell, indexPath, itemIdentifier in
-            cell.titleLabel.text = itemIdentifier.title
-            cell.descriptionLabel.text = itemIdentifier.detail
-            cell.weatherImage.image = UIImage(systemName: "wind")!
+            cell.configureData(itemIdentifier)
         }
         
         let headerRegistration = UICollectionView.SupplementaryRegistration<TitleSupplementaryView>(elementKind: WeatherMainViewController.tempSectionHeader) { supplementaryView, string, indexPath in
@@ -239,8 +234,6 @@ extension WeatherMainViewController {
                 return nil
             }
         }
-        
-        
         
     }
 }

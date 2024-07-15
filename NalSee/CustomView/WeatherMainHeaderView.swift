@@ -66,11 +66,20 @@ final class WeatherMainHeaderView: BaseView {
             make.centerX.equalTo(safeAreaLayoutGuide)
         }
     }
-    
-    func setData(){
-        cityLabel.text = "Jeju City"
-        tempLabel.text = "5.9"
-        weatherLabel.text = "Broken Clouds"
-        descriptionLabel.text = "최고: 7.0 | 최저: -4.2"
+
+    func configureData(_ data: CurrentWeatherResult){
+        let celsius = UnitTemperature.celsius.converter.value(fromBaseUnitValue: data.main.temp)
+        let celsiusStr = String(format: "%.f", celsius) + "°"
+        
+        let maxCelsius = UnitTemperature.celsius.converter.value(fromBaseUnitValue: data.main.temp_max)
+        let maxCelsiusStr = String(format: "%.f", maxCelsius) + "°"
+        
+        let minCelsius = UnitTemperature.celsius.converter.value(fromBaseUnitValue: data.main.temp_min)
+        let minCelsiusStr = String(format: "%.f", minCelsius) + "°"
+        
+        cityLabel.text = "\(data.name) city"
+        tempLabel.text = celsiusStr
+        weatherLabel.text = data.weather.first?.description
+        descriptionLabel.text = "최고: \(maxCelsiusStr) | 최저: \(minCelsiusStr)"
     }
 }

@@ -13,6 +13,14 @@ struct WeatherResult: Decodable {
     let city: CityInfo
 }
 
+struct CurrentWeatherResult: Decodable {
+    let weather: [Weather]
+    let main: MainInfo
+    let wind: Wind
+    let clouds: Cloud
+    let name: String
+}
+
 struct CityInfo: Decodable {
     let id: Int
     let name: String

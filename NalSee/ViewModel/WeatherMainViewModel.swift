@@ -19,10 +19,12 @@ final class WeatherMainViewModel {
             )
         )
     )
+    var outputCurrentWeatherResult: CObservable<CurrentWeatherResult?> = CObservable(nil)
     
     var outputThreeHourResult: CObservable<[HourWeather]> = CObservable([])
     var outputFiveDayResult: CObservable<[WeekWeather]> = CObservable([])
     var outputLocationResult: CObservable<[LocWeather]> = CObservable([LocWeather(lat: 0, lon: 0)])
+    var outputDetailResult: CObservable<[DetailWeather]> = CObservable([])
     
     func getWeatherResult(){
         APIManager.shared.callForecast(lat: 37.572601, lon: 126.979289, completion: {
@@ -33,6 +35,19 @@ final class WeatherMainViewModel {
                 self.getThreeHourResult()
                 self.getFiveDaysResult()
                 self.outputLocationResult.value = [LocWeather(lat: 37.572601, lon: 126.979289)]
+            case .failure(let error):
+                print(error)
+            }
+        })
+    }
+    
+    func getCurrentWeatherResult(){
+        APIManager.shared.callCurrentForecast(lat: 37.572601, lon: 126.979289, completion: {
+             result in
+            switch result {
+            case .success(let value):
+                self.outputCurrentWeatherResult.value = value
+                self.getDetailResult()
             case .failure(let error):
                 print(error)
             }
@@ -116,5 +131,24 @@ final class WeatherMainViewModel {
         outputFiveDayResult.value = list
 
     }
-    
+ 
+    func getDetailResult(){
+        guard let result = outputCurrentWeatherResult.value else { return }
+
+        var list: [DetailWeather] = []
+        
+        let windSpeed = "\(result.wind.speed)m/s"
+        let cloud = "\(result.clouds.all)%"
+        let pressure = "\(result.main.pressure)hps"
+        let humidity = "\(result.main.humidity)%"
+        
+        let titleList = ["바람속도", "구름", "기압", "습도"]
+        let detailList:[String] = [windSpeed, cloud, pressure, humidity]
+        
+        for i in 0..<4 {
+            list.append(DetailWeather(title: titleList[i], detail: detailList[i]))
+        }
+        
+        outputDetailResult.value = list
+    }
 }

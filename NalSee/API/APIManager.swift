@@ -23,7 +23,19 @@ final class APIManager {
                 completion(.failure(error))
             }
         }
+    }
+    
+    func callCurrentForecast(lat: Double, lon: Double, completion: @escaping (Result<CurrentWeatherResult, AFError>) -> Void){
+        let url = APIURL.currentWeather + "?lat=\(lat)&lon=\(lon)&appid=\(APIKey.id)"
         
-        
+        AF.request(url, method: .get).responseDecodable(of: CurrentWeatherResult.self) { response in
+            switch response.result {
+            case .success(let value):
+                completion(.success(value))
+            case .failure(let error):
+                print(error)
+                completion(.failure(error))
+            }
+        }
     }
 }

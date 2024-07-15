@@ -31,9 +31,13 @@ final class WeatherMainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.isHidden = true
         configureDataSource()
         bind()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = true
     }
     
     override func configureHierarchy() {
@@ -56,7 +60,35 @@ final class WeatherMainViewController: BaseViewController {
     
     override func configureUI() {
         collectionView.backgroundColor = .black
+        setUpToolbar()
+    }
+    
+    func setUpToolbar(){
+        navigationController?.isToolbarHidden = false
         
+        let appearance = UIToolbarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .black
+        
+        navigationController?.toolbar.scrollEdgeAppearance = appearance
+        navigationController?.toolbar.standardAppearance = appearance
+        navigationController?.toolbar.tintColor = .white
+
+        let flexibleSpace = UIBarButtonItem(systemItem: .flexibleSpace)
+        let map = UIBarButtonItem(image: UIImage(systemName: "map"), style: .plain, target: self, action: #selector(mapButtonClicked))
+        let search = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass"), style: .plain, target: self, action: #selector(searchButtonClicked))
+        
+        let barItems = [map, flexibleSpace, search]
+        self.toolbarItems = barItems
+    }
+    
+    @objc func mapButtonClicked(){
+        
+    }
+    
+    @objc func searchButtonClicked(){
+        let searchVC = CitySearchViewController()
+        navigationController?.pushViewController(searchVC, animated: true)
     }
     
     func bind(){

@@ -34,6 +34,10 @@ final class CitySearchViewController: BaseViewController {
         }
     }
     
+    override func configureUI() {
+        navigationController?.navigationBar.isHidden = false
+    }
+    
 }
 
 extension CitySearchViewController {
@@ -42,14 +46,13 @@ extension CitySearchViewController {
             (tableView: UITableView, index: Int, element: City) -> UITableViewCell in
             guard let cell = tableView.dequeueReusableCell(withIdentifier: CityTableViewCell.reuseIdentifier) as? CityTableViewCell
             else { fatalError() }
-            cell.cityLabel.text = element.name
+            cell.cityLabel.text = "# " + element.name
             cell.countryLabel.text = element.country
             return cell
         }.disposed(by: disposeBag)
         
         tableView.rx.itemSelected.bind{ [weak self] indexPath in
-            let mainVC = WeatherMainViewController()
-            self?.navigationController?.pushViewController(mainVC, animated: true)
+            self?.navigationController?.popViewController(animated: true)
         }.disposed(by: disposeBag)
     }
 }

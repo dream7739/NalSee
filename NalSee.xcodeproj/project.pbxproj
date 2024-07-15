@@ -29,7 +29,6 @@
 		8866C6C02C4298A900BAA794 /* CitySearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8866C6BF2C4298A900BAA794 /* CitySearchViewController.swift */; };
 		8866C6C22C4298BE00BAA794 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8866C6C12C4298BE00BAA794 /* MapViewController.swift */; };
 		8866C6C42C42992B00BAA794 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8866C6C32C42992B00BAA794 /* BaseViewController.swift */; };
-		8866C6C72C429CA800BAA794 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8866C6C62C429CA800BAA794 /* TabBarController.swift */; };
 		8866C6CC2C429F2500BAA794 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8866C6CB2C429F2500BAA794 /* Alamofire */; };
 		8866C6CF2C429F3200BAA794 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8866C6CE2C429F3200BAA794 /* SnapKit */; };
 		8866C6D12C429F7400BAA794 /* CityList.json in Resources */ = {isa = PBXBuildFile; fileRef = 8866C6D02C429F7400BAA794 /* CityList.json */; };
@@ -70,7 +69,6 @@
 		8866C6BF2C4298A900BAA794 /* CitySearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitySearchViewController.swift; sourceTree = "<group>"; };
 		8866C6C12C4298BE00BAA794 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		8866C6C32C42992B00BAA794 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
-		8866C6C62C429CA800BAA794 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
 		8866C6D02C429F7400BAA794 /* CityList.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = CityList.json; sourceTree = "<group>"; };
 		8866C6D22C42A01400BAA794 /* CityTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CityTableViewCell.swift; sourceTree = "<group>"; };
 		8866C6D52C42A02A00BAA794 /* BaseTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseTableViewCell.swift; sourceTree = "<group>"; };
@@ -134,8 +132,8 @@
 		8866C6A42C4295A500BAA794 /* NalSee */ = {
 			isa = PBXGroup;
 			children = (
-				883084562C43F03000172010 /* API */,
 				8866C6D02C429F7400BAA794 /* CityList.json */,
+				883084562C43F03000172010 /* API */,
 				883084442C43A87700172010 /* CustomView */,
 				8866C6E22C42B47100BAA794 /* ViewModel */,
 				8866C6DF2C42B36B00BAA794 /* Constant */,
@@ -180,7 +178,6 @@
 		8866C6C92C429EFD00BAA794 /* TabBar */ = {
 			isa = PBXGroup;
 			children = (
-				8866C6C62C429CA800BAA794 /* TabBarController.swift */,
 			);
 			path = TabBar;
 			sourceTree = "<group>";
@@ -322,7 +319,6 @@
 				8866C6D32C42A01400BAA794 /* CityTableViewCell.swift in Sources */,
 				883084522C43DF4000172010 /* LocationCollectionViewCell.swift in Sources */,
 				8866C6AA2C4295A500BAA794 /* WeatherMainViewController.swift in Sources */,
-				8866C6C72C429CA800BAA794 /* TabBarController.swift in Sources */,
 				883084482C43A89900172010 /* BaseView.swift in Sources */,
 				880068AB2C44031500078E4C /* HashableWeather.swift in Sources */,
 				8866C6C22C4298BE00BAA794 /* MapViewController.swift in Sources */,

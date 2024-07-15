@@ -14,31 +14,13 @@ final class WeatherMainViewController: BaseViewController {
     
     static let tempSectionHeader = "tempSectionHeader"
     
+    
     let headerView = WeatherMainHeaderView()
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
     var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+    
     let viewModel = WeatherMainViewModel()
-    
-    typealias Item = AnyHashable
-    
-    let dummyWeather: [HourWeather] = [
-        HourWeather(hour: "11", weather: "heart.fill", temp: "14"),
-        HourWeather(hour: "13", weather: "heart.fill", temp: "16"),
-        HourWeather(hour: "15", weather: "heart.fill", temp: "18"),
-        HourWeather(hour: "17", weather: "heart.fill", temp: "20"),
-        HourWeather(hour: "19", weather: "heart.fill", temp: "22")
-    ]
-    
-    
-    let dummyWeekWeather: [WeekWeather] = [
-        WeekWeather(weekDay: "오늘", weather: "heart.fill", lowTemp: "최저 -2", highTemp: "최고 9"),
-        WeekWeather(weekDay: "목", weather: "heart.fill", lowTemp: "최저 -3", highTemp: "최고 10"),
-        WeekWeather(weekDay: "금", weather: "heart.fill", lowTemp: "최저 -4", highTemp: "최고 11"),
-        WeekWeather(weekDay: "토", weather: "heart.fill", lowTemp: "최저 -5", highTemp: "최고 12"),
-        WeekWeather(weekDay: "일", weather: "heart.fill", lowTemp: "최저 -2", highTemp: "최고 13"),
-        WeekWeather(weekDay: "월", weather: "heart.fill", lowTemp: "최저 -2", highTemp: "최고 9")
-    ]
     
     let dummyLocation: [LocWeather] = [LocWeather(lat:  37.572601, lon: 126.979289)]
     
@@ -48,6 +30,8 @@ final class WeatherMainViewController: BaseViewController {
         DetailWeather(title: "기압", detail: "102hpa"),
         DetailWeather(title: "습도", detail: "73%")
     ]
+    
+    typealias Item = AnyHashable
     
     enum Section: String, CaseIterable {
         case hour = "3시간 간격의 일기예보"
@@ -59,6 +43,7 @@ final class WeatherMainViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
+        configureDataSource()
         bind()
     }
     
@@ -82,17 +67,18 @@ final class WeatherMainViewController: BaseViewController {
     
     override func configureUI() {
         headerView.setData()
-        configureDataSource()
         collectionView.backgroundColor = .black
+        
     }
     
     func bind(){
         viewModel.getWeatherResult()
         
-        viewModel.outputWeatherResult.bind({ value in
-            print("통신 완료!")
-        })
-        
+        viewModel.outputWeatherResult.bind{ value in
+            
+            
+        }
+
         viewModel.outputThreeHourResult.bind { value in
             self.snapshot.appendSections([.hour])
             self.snapshot.appendItems(value)
@@ -101,6 +87,12 @@ final class WeatherMainViewController: BaseViewController {
         
         viewModel.outputFiveDayResult.bind { value in
             self.snapshot.appendSections([.week])
+            self.snapshot.appendItems(value)
+            self.dataSource.apply(self.snapshot)
+        }
+        
+        viewModel.outputLocationResult.bind { value in
+            self.snapshot.appendSections([.location])
             self.snapshot.appendItems(value)
             self.dataSource.apply(self.snapshot)
         }
@@ -194,6 +186,7 @@ extension WeatherMainViewController {
     }
     
     func configureDataSource(){
+        print(#function)
         let hourCellRegisteration = UICollectionView.CellRegistration<HourCastCollectionViewCell, HourWeather>.init { cell, indexPath, itemIdentifier in
             cell.configureData(itemIdentifier)
         }
@@ -247,13 +240,7 @@ extension WeatherMainViewController {
             }
         }
         
-//        snapshot.appendSections([.hour, .week, .location, .detail])
-//        snapshot.appendItems(dummyWeather, toSection: .hour)
-//        snapshot.appendItems(dummyWeekWeather, toSection: .week)
-//        snapshot.appendItems(dummyLocation, toSection: .location)
-//        snapshot.appendItems(dummyDetail, toSection: .detail)
-//        
-//        dataSource.apply(snapshot)
+        
         
     }
 }

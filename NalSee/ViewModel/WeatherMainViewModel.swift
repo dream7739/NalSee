@@ -21,8 +21,8 @@ final class WeatherMainViewModel {
     )
     
     var outputThreeHourResult: CObservable<[HourWeather]> = CObservable([])
-    
     var outputFiveDayResult: CObservable<[WeekWeather]> = CObservable([])
+    var outputLocationResult: CObservable<[LocWeather]> = CObservable([LocWeather(lat: 0, lon: 0)])
     
     func getWeatherResult(){
         APIManager.shared.callForecast(lat: 37.572601, lon: 126.979289, completion: {
@@ -32,6 +32,7 @@ final class WeatherMainViewModel {
                 self.outputWeatherResult.value = value
                 self.getThreeHourResult()
                 self.getFiveDaysResult()
+                self.outputLocationResult.value = [LocWeather(lat: 37.572601, lon: 126.979289)]
             case .failure(let error):
                 print(error)
             }

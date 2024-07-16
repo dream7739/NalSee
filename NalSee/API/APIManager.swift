@@ -11,8 +11,8 @@ import Alamofire
 final class APIManager {
     static let shared = APIManager()
     
-    func callForecast(lat: Double, lon: Double, completion: @escaping (Result<WeatherResult, AFError>) -> Void){
-        let url = APIURL.weather + "?lat=\(lat)&lon=\(lon)&appid=\(APIKey.id)"
+    func callForecast(_ coord: Coord, completion: @escaping (Result<WeatherResult, AFError>) -> Void){
+        let url = APIURL.weather + "?lat=\(coord.lat)&lon=\(coord.lat)&appid=\(APIKey.id)"
         
         AF.request(url, method: .get).responseDecodable(of: WeatherResult.self) { response in
             switch response.result {
@@ -25,8 +25,8 @@ final class APIManager {
         }
     }
     
-    func callCurrentForecast(lat: Double, lon: Double, completion: @escaping (Result<CurrentWeatherResult, AFError>) -> Void){
-        let url = APIURL.currentWeather + "?lat=\(lat)&lon=\(lon)&appid=\(APIKey.id)"
+    func callCurrentForecast(_ coord: Coord, completion: @escaping (Result<CurrentWeatherResult, AFError>) -> Void){
+        let url = APIURL.currentWeather + "?lat=\(coord.lat)&lon=\(coord.lon)&appid=\(APIKey.id)"
         
         AF.request(url, method: .get).responseDecodable(of: CurrentWeatherResult.self) { response in
             switch response.result {

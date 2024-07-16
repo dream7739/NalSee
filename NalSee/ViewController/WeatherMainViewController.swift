@@ -88,6 +88,11 @@ final class WeatherMainViewController: BaseViewController {
     
     @objc func searchButtonClicked(){
         let searchVC = CitySearchViewController()
+        
+        searchVC.viewModel.coordSender = { value in
+            self.viewModel.inputCoord.value = value
+        }
+        
         navigationController?.pushViewController(searchVC, animated: true)
     }
     
@@ -102,29 +107,33 @@ final class WeatherMainViewController: BaseViewController {
         
         viewModel.outputThreeHourResult.bind { value in
             var snapshot = self.dataSource.snapshot()
-            snapshot.appendSections([.hour])
-            snapshot.appendItems(value)
+            let item = snapshot.itemIdentifiers(inSection: .hour)
+            snapshot.deleteItems(item)
+            snapshot.appendItems(value, toSection: .hour)
             self.dataSource.apply(snapshot)
         }
         
         viewModel.outputFiveDayResult.bind { value in
             var snapshot = self.dataSource.snapshot()
-            snapshot.appendSections([.week])
-            snapshot.appendItems(value)
+            let item = snapshot.itemIdentifiers(inSection: .week)
+            snapshot.deleteItems(item)
+            snapshot.appendItems(value, toSection: .week)
             self.dataSource.apply(snapshot)
         }
         
         viewModel.outputLocationResult.bind { value in
             var snapshot = self.dataSource.snapshot()
-            snapshot.appendSections([.location])
-            snapshot.appendItems(value)
+            let item = snapshot.itemIdentifiers(inSection: .location)
+            snapshot.deleteItems(item)
+            snapshot.appendItems(value, toSection: .location)
             self.dataSource.apply(snapshot)
         }
         
         viewModel.outputDetailResult.bind { value in
             var snapshot = self.dataSource.snapshot()
-            snapshot.appendSections([.detail])
-            snapshot.appendItems(value)
+            let item = snapshot.itemIdentifiers(inSection: .detail)
+            snapshot.deleteItems(item)
+            snapshot.appendItems(value, toSection: .detail)
             self.dataSource.apply(snapshot)
         }
     }
@@ -267,5 +276,8 @@ extension WeatherMainViewController {
             }
         }
         
+        var snapshot = dataSource.snapshot()
+        snapshot.appendSections([.hour, .week, .location, .detail])
+        dataSource.apply(snapshot)
     }
 }

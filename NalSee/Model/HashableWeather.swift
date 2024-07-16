@@ -24,11 +24,13 @@ struct WeekWeather: Hashable {
 
 
 struct LocWeather: Hashable {
+    let id = UUID()
     let lat: Double
     let lon: Double
 }
 
 struct DetailWeather: Hashable {
+    let id = UUID()
     let title: String
     let detail: String
 }

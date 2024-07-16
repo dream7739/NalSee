@@ -6,10 +6,10 @@
 //
 
 import Foundation
-import RxSwift
 
-class CitySearchViewModel {
-    var cityList: [City] = []
+final class CitySearchViewModel {
+    var outputCityResult: CObservable<[City]> = CObservable([])
+    var coordSender: ((Coord) -> Void)?
 
     init(){
         do {
@@ -21,9 +21,6 @@ class CitySearchViewModel {
         }
     }
     
-    func getCellData() -> Observable<[City]> {
-        return Observable.of(cityList)
-    }
 }
 extension CitySearchViewModel {
     func configureBundleData() throws {
@@ -39,7 +36,7 @@ extension CitySearchViewModel {
             
             do {
                 let list = try JSONDecoder().decode([City].self, from: data)
-                cityList = list
+                outputCityResult.value = list
             }catch{
                 throw JsonParseError.failDataDecoding
             }

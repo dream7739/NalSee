@@ -6,8 +6,6 @@
 //
 
 import UIKit
-import RxCocoa
-import RxSwift
 import SnapKit
 
 final class CitySearchViewController: BaseViewController {
@@ -15,13 +13,13 @@ final class CitySearchViewController: BaseViewController {
     private let searchController = UISearchController(searchResultsController: nil)
     private let tableView = UITableView()
     
-    let disposeBag = DisposeBag()
+    let viewModel = CitySearchViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         configureSearch()
         configureTableView()
-        bind(CitySearchViewModel())
+        bind()
     }
     
     override func configureHierarchy() {
@@ -41,19 +39,10 @@ final class CitySearchViewController: BaseViewController {
 }
 
 extension CitySearchViewController {
-    func bind(_ viewModel: CitySearchViewModel){
-        viewModel.getCellData().bind(to: tableView.rx.items){
-            (tableView: UITableView, index: Int, element: City) -> UITableViewCell in
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: CityTableViewCell.reuseIdentifier) as? CityTableViewCell
-            else { fatalError() }
-            cell.cityLabel.text = "# " + element.name
-            cell.countryLabel.text = element.country
-            return cell
-        }.disposed(by: disposeBag)
-        
-        tableView.rx.itemSelected.bind{ [weak self] indexPath in
-            self?.navigationController?.popViewController(animated: true)
-        }.disposed(by: disposeBag)
+    func bind(){
+        viewModel.outputCityResult.bind { value in
+            self.tableView.reloadData()
+        }
     }
 }
 
@@ -76,6 +65,28 @@ extension CitySearchViewController {
     private func configureTableView(){
         tableView.register(CityTableViewCell.self, forCellReuseIdentifier: CityTableViewCell.reuseIdentifier)
         tableView.backgroundColor = .black
+        tableView.delegate = self
+        tableView.dataSource = self
     }
 }
 
+extension CitySearchViewController: UITableViewDataSource, UITableViewDelegate {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return viewModel.outputCityResult.value.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: CityTableViewCell.reuseIdentifier, for: indexPath) as? CityTableViewCell else { return UITableViewCell() }
+        let data = viewModel.outputCityResult.value[indexPath.row]
+        cell.cityLabel.text = "# \(data.name)"
+        cell.countryLabel.text = data.country
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let coord = viewModel.outputCityResult.value[indexPath.row].coord
+        viewModel.coordSender?(coord)
+        navigationController?.popViewController(animated: true)
+        print(#function)
+    }
+}

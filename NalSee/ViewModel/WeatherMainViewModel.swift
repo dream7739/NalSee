@@ -8,6 +8,7 @@
 import Foundation
 
 final class WeatherMainViewModel {
+    var inputCoord: CObservable<Coord> = CObservable(Coord(lat: 37.572601, lon: 126.979289))
     var outputWeatherResult: CObservable<WeatherResult> = CObservable(
         WeatherResult(
             cod: "",
@@ -15,7 +16,7 @@ final class WeatherMainViewModel {
             city: CityInfo(
                 id: 0,
                 name: "",
-                coord: CoordInfo(lat: 0, lon: 0)
+                coord: Coord(lat: 0, lon: 0)
             )
         )
     )
@@ -26,8 +27,24 @@ final class WeatherMainViewModel {
     var outputLocationResult: CObservable<[LocWeather]> = CObservable([LocWeather(lat: 0, lon: 0)])
     var outputDetailResult: CObservable<[DetailWeather]> = CObservable([])
     
+    init(){
+        transform()
+    }
+    
+    func transform(){
+        inputCoord.bind { value in
+            self.outputThreeHourResult.value = []
+            self.outputFiveDayResult.value = []
+            self.outputLocationResult.value = []
+            self.outputDetailResult.value = []
+            
+            self.getWeatherResult()
+            self.getCurrentWeatherResult()
+        }
+    }
+    
     func getWeatherResult(){
-        APIManager.shared.callForecast(lat: 37.572601, lon: 126.979289, completion: {
+        APIManager.shared.callForecast(inputCoord.value,  completion: {
              result in
             switch result {
             case .success(let value):
@@ -42,7 +59,7 @@ final class WeatherMainViewModel {
     }
     
     func getCurrentWeatherResult(){
-        APIManager.shared.callCurrentForecast(lat: 37.572601, lon: 126.979289, completion: {
+        APIManager.shared.callCurrentForecast(inputCoord.value, completion: {
              result in
             switch result {
             case .success(let value):

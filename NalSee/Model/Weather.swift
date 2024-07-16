@@ -24,13 +24,9 @@ struct CurrentWeatherResult: Decodable {
 struct CityInfo: Decodable {
     let id: Int
     let name: String
-    let coord: CoordInfo
+    let coord: Coord
 }
 
-struct CoordInfo: Decodable {
-    let lat: Double
-    let lon: Double
-}
 
 struct WeatherInfo: Decodable {
     let dt: Int

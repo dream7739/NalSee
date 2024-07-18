@@ -40,7 +40,10 @@ final class CitySearchViewController: BaseViewController {
 
 extension CitySearchViewController {
     func bind(){
-        viewModel.outputCityResult.bind { value in
+        
+        viewModel.inputViewDidLoadTrigger.value = ()
+   
+        viewModel.outputFilterCityResult.bind { value in
             self.tableView.reloadData()
         }
     }
@@ -48,7 +51,8 @@ extension CitySearchViewController {
 
 extension CitySearchViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
-        print(#function)
+        let text = searchController.searchBar.text!
+        viewModel.inputSearchText.value = text
     }
 }
 
@@ -72,19 +76,19 @@ extension CitySearchViewController {
 
 extension CitySearchViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.outputCityResult.value.count
+        return viewModel.outputFilterCityResult.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CityTableViewCell.reuseIdentifier, for: indexPath) as? CityTableViewCell else { return UITableViewCell() }
-        let data = viewModel.outputCityResult.value[indexPath.row]
+        let data = viewModel.outputFilterCityResult.value[indexPath.row]
         cell.cityLabel.text = "# \(data.name)"
         cell.countryLabel.text = data.country
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let coord = viewModel.outputCityResult.value[indexPath.row].coord
+        let coord = viewModel.outputFilterCityResult.value[indexPath.row].coord
         viewModel.coordSender?(coord)
         navigationController?.popViewController(animated: true)
         print(#function)

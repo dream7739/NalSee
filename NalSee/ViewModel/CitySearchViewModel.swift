@@ -8,20 +8,44 @@
 import Foundation
 
 final class CitySearchViewModel {
-    var outputCityResult: CObservable<[City]> = CObservable([])
+    var inputViewDidLoadTrigger: CObservable<Void?> = CObservable(nil)
+    var inputSearchText: CObservable<String> = CObservable("")
+    
+    var outputFilterCityResult: CObservable<[City]> = CObservable([])
+    
+    private var cityResult: [City] = []
     var coordSender: ((Coord) -> Void)?
 
     init(){
-        do {
-            try configureBundleData()
-        }catch let e as JsonParseError{
-            print(e.localizedDescription)
-        }catch {
-            print("원인불명의 에러")
+       transform()
+    }
+    
+    private func transform(){
+        inputViewDidLoadTrigger.bind { [weak self] _ in
+            do {
+                try self?.configureBundleData()
+            }catch let e as JsonParseError{
+                print(e.localizedDescription)
+            }catch {
+                print("원인불명의 에러")
+            }
+        }
+        
+        inputSearchText.bind { [weak self] value in
+            let trimText = value.trimmingCharacters(in: .whitespaces)
+            
+            if !trimText.isEmpty {
+                self?.outputFilterCityResult.value = self?.cityResult.filter{
+                    $0.name.localizedCaseInsensitiveContains(trimText)
+                } ?? []
+            }else{
+                self?.outputFilterCityResult.value = self?.cityResult ?? []
+            }
         }
     }
     
 }
+
 extension CitySearchViewModel {
     func configureBundleData() throws {
         let fileName = "CityList"
@@ -36,7 +60,8 @@ extension CitySearchViewModel {
             
             do {
                 let list = try JSONDecoder().decode([City].self, from: data)
-                outputCityResult.value = list
+                cityResult = list
+                outputFilterCityResult.value = list
             }catch{
                 throw JsonParseError.failDataDecoding
             }

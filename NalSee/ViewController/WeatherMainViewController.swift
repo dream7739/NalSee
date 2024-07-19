@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import RxSwift
 import SnapKit
 
 
@@ -83,7 +82,8 @@ final class WeatherMainViewController: BaseViewController {
     }
     
     @objc func mapButtonClicked(){
-        
+        let mapVC = MapViewController()
+        navigationController?.pushViewController(mapVC, animated: true)
     }
     
     @objc func searchButtonClicked(){
@@ -243,7 +243,7 @@ extension WeatherMainViewController {
         
         let headerRegistration = UICollectionView.SupplementaryRegistration<TitleSupplementaryView>(elementKind: WeatherMainViewController.tempSectionHeader) { supplementaryView, string, indexPath in
             supplementaryView.titleLabel.text = Section.allCases[indexPath.section].rawValue
-        }
+        } 
         
         dataSource = UICollectionViewDiffableDataSource(collectionView: collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             switch Section.allCases[indexPath.section]{

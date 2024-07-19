@@ -41,6 +41,7 @@
 		8866C6E72C42B5C400BAA794 /* CitySearchViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8866C6E62C42B5C400BAA794 /* CitySearchViewModel.swift */; };
 		886F2CFC2C44F7D6006E7615 /* CObservable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 886F2CFB2C44F7D6006E7615 /* CObservable.swift */; };
 		886F2CFF2C450AA1006E7615 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 886F2CFE2C450AA1006E7615 /* Kingfisher */; };
+		889A81FB2C4A1DD30080F109 /* UIViewController+.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889A81FA2C4A1DD30080F109 /* UIViewController+.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -77,6 +78,7 @@
 		8866C6E02C42B37800BAA794 /* Error.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
 		8866C6E62C42B5C400BAA794 /* CitySearchViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CitySearchViewModel.swift; sourceTree = "<group>"; };
 		886F2CFB2C44F7D6006E7615 /* CObservable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CObservable.swift; sourceTree = "<group>"; };
+		889A81FA2C4A1DD30080F109 /* UIViewController+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 		8866C6A42C4295A500BAA794 /* NalSee */ = {
 			isa = PBXGroup;
 			children = (
+				889A81F92C4A1DCC0080F109 /* Extension */,
 				8866C6D02C429F7400BAA794 /* CityList.json */,
 				883084562C43F03000172010 /* API */,
 				883084442C43A87700172010 /* CustomView */,
@@ -228,6 +231,14 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		889A81F92C4A1DCC0080F109 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				889A81FA2C4A1DD30080F109 /* UIViewController+.swift */,
+			);
+			path = Extension;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -324,6 +335,7 @@
 				8866C6D82C42A12500BAA794 /* ReusableProtocol.swift in Sources */,
 				880068A92C44016C00078E4C /* WeatherMainViewModel.swift in Sources */,
 				883084542C43E7FB00172010 /* DetailCollectionViewCell.swift in Sources */,
+				889A81FB2C4A1DD30080F109 /* UIViewController+.swift in Sources */,
 				8866C6BE2C42985300BAA794 /* APIKey.swift in Sources */,
 				8830845B2C43F17F00172010 /* Weather.swift in Sources */,
 				8866C6E72C42B5C400BAA794 /* CitySearchViewModel.swift in Sources */,
@@ -480,6 +492,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6ZWU3ZJ8BG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NalSee/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -511,6 +524,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6ZWU3ZJ8BG;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NalSee/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

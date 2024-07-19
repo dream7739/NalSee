@@ -8,15 +8,15 @@
 import UIKit
 import SnapKit
 
-final class CityTableViewCell: BaseTableViewCell {
-    let cityLabel = {
+final class WeatherCityTableViewCell: BaseTableViewCell {
+    private let cityLabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 13)
         label.textColor = .white
         return label
     }()
     
-    let countryLabel = {
+    private let countryLabel = {
         let label = UILabel()
         label.font = Font.tertiary
         label.textColor = .darkGray
@@ -43,6 +43,11 @@ final class CityTableViewCell: BaseTableViewCell {
     
     override func configureUI() {
         contentView.backgroundColor = .black
+    }
+    
+    func configureData(_ data: City){
+        cityLabel.text = "# \(data.name)"
+        countryLabel.text = data.country
     }
     
 }

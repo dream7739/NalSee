@@ -11,12 +11,6 @@ protocol ReusableProtocol {
     static var reuseIdentifier: String { get }
 }
 
-extension UIViewController: ReusableProtocol {
-    static var reuseIdentifier: String {
-        return String(describing: self)
-    }
-}
-
 extension UIView: ReusableProtocol {
     static var reuseIdentifier: String {
         return String(describing: self)

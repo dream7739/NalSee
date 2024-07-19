@@ -7,14 +7,14 @@
 
 import UIKit
 
-struct HourWeather: Hashable {
+struct HourWeather: Hashable, Identifiable {
     let id = UUID()
     let hour: String
     let weather: String
     let temp: String
 }
 
-struct WeekWeather: Hashable {
+struct WeekWeather: Hashable, Identifiable {
     let id = UUID()
     let weekDay: String
     let weather: String
@@ -22,14 +22,13 @@ struct WeekWeather: Hashable {
     let highTemp: String
 }
 
-
-struct LocWeather: Hashable {
+struct LocWeather: Hashable, Identifiable {
     let id = UUID()
     let lat: Double
     let lon: Double
 }
 
-struct DetailWeather: Hashable {
+struct DetailWeather: Hashable, Identifiable {
     let id = UUID()
     let title: String
     let detail: String

@@ -9,8 +9,8 @@ import UIKit
 import MapKit
 import SnapKit
 
-class LocationCollectionViewCell: BaseCollectionViewCell {
-    let mapView = MKMapView()
+final class LocationCollectionViewCell: BaseCollectionViewCell {
+    private let mapView = MKMapView()
     
     override func configureHierarchy() {
         contentView.addSubview(mapView)
@@ -23,6 +23,7 @@ class LocationCollectionViewCell: BaseCollectionViewCell {
     }
     override func configureUI() {
         mapView.overrideUserInterfaceStyle = .dark
+        mapView.isScrollEnabled = false
     }
     
     func setLocation(_ lat: Double, _ lon: Double){
@@ -30,9 +31,16 @@ class LocationCollectionViewCell: BaseCollectionViewCell {
         let span = MKCoordinateSpan(latitudeDelta: 10, longitudeDelta: 10)
         let region = MKCoordinateRegion(center: center, span: span)
         mapView.setRegion(region, animated: true)
+        configureAnnotation(center)
+    }
+    
+    private func configureAnnotation(_ center: CLLocationCoordinate2D){
+        if !mapView.annotations.isEmpty {
+            mapView.removeAnnotations(mapView.annotations)
+        }
+        
         let annotation = MKPointAnnotation()
         annotation.coordinate = center
         mapView.addAnnotation(annotation)
-        mapView.isScrollEnabled = false
     }
 }

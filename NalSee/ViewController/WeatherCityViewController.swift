@@ -1,5 +1,5 @@
 //
-//  CitySearchViewController.swift
+//  WeatherCityViewController.swift
 //  NalSee
 //
 //  Created by 홍정민 on 7/13/24.
@@ -8,12 +8,12 @@
 import UIKit
 import SnapKit
 
-final class CitySearchViewController: BaseViewController {
+final class WeatherCityViewController: BaseViewController {
     
     private let searchController = UISearchController(searchResultsController: nil)
     private let tableView = UITableView()
     
-    let viewModel = CitySearchViewModel()
+    let viewModel = WeatherCityViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,25 +38,23 @@ final class CitySearchViewController: BaseViewController {
     
 }
 
-extension CitySearchViewController {
+extension WeatherCityViewController {
     func bind(){
-        
         viewModel.inputViewDidLoadTrigger.value = ()
-   
         viewModel.outputFilterCityResult.bind { value in
             self.tableView.reloadData()
         }
     }
 }
 
-extension CitySearchViewController: UISearchResultsUpdating {
+extension WeatherCityViewController: UISearchResultsUpdating {
     func updateSearchResults(for searchController: UISearchController) {
         let text = searchController.searchBar.text!
         viewModel.inputSearchText.value = text
     }
 }
 
-extension CitySearchViewController {
+extension WeatherCityViewController {
     private func configureSearch(){
         navigationItem.title = "City"
         searchController.searchResultsUpdater = self
@@ -67,23 +65,22 @@ extension CitySearchViewController {
     }
     
     private func configureTableView(){
-        tableView.register(CityTableViewCell.self, forCellReuseIdentifier: CityTableViewCell.reuseIdentifier)
+        tableView.register(WeatherCityTableViewCell.self, forCellReuseIdentifier: WeatherCityTableViewCell.reuseIdentifier)
         tableView.backgroundColor = .black
         tableView.delegate = self
         tableView.dataSource = self
     }
 }
 
-extension CitySearchViewController: UITableViewDataSource, UITableViewDelegate {
+extension WeatherCityViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return viewModel.outputFilterCityResult.value.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CityTableViewCell.reuseIdentifier, for: indexPath) as? CityTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: WeatherCityTableViewCell.reuseIdentifier, for: indexPath) as? WeatherCityTableViewCell else { return UITableViewCell() }
         let data = viewModel.outputFilterCityResult.value[indexPath.row]
-        cell.cityLabel.text = "# \(data.name)"
-        cell.countryLabel.text = data.country
+        cell.configureData(data)
         return cell
     }
     
@@ -91,6 +88,5 @@ extension CitySearchViewController: UITableViewDataSource, UITableViewDelegate {
         let coord = viewModel.outputFilterCityResult.value[indexPath.row].coord
         viewModel.coordSender?(coord)
         navigationController?.popViewController(animated: true)
-        print(#function)
     }
 }

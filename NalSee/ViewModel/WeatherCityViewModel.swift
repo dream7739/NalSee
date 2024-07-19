@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class CitySearchViewModel {
+final class WeatherCityViewModel {
     var inputViewDidLoadTrigger: CObservable<Void?> = CObservable(nil)
     var inputSearchText: CObservable<String> = CObservable("")
     
@@ -46,8 +46,8 @@ final class CitySearchViewModel {
     
 }
 
-extension CitySearchViewModel {
-    func configureBundleData() throws {
+extension WeatherCityViewModel {
+    private func configureBundleData() throws {
         let fileName = "CityList"
         let extensionType = "json"
         

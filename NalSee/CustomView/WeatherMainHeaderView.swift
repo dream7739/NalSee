@@ -68,18 +68,13 @@ final class WeatherMainHeaderView: BaseView {
     }
 
     func configureData(_ data: CurrentWeatherResult){
-        let celsius = UnitTemperature.celsius.converter.value(fromBaseUnitValue: data.main.temp)
-        let celsiusStr = String(format: "%.f", celsius) + "°"
-        
-        let maxCelsius = UnitTemperature.celsius.converter.value(fromBaseUnitValue: data.main.temp_max)
-        let maxCelsiusStr = String(format: "%.f", maxCelsius) + "°"
-        
-        let minCelsius = UnitTemperature.celsius.converter.value(fromBaseUnitValue: data.main.temp_min)
-        let minCelsiusStr = String(format: "%.f", minCelsius) + "°"
+        let celsiusString = data.main.temp.celsiusString
+        let maxCelsiusString = data.main.temp_max.celsiusString
+        let minCelsiusString = data.main.temp_min.celsiusString
         
         cityLabel.text = "\(data.name) city"
-        tempLabel.text = celsiusStr
+        tempLabel.text = celsiusString
         weatherLabel.text = data.weather.first?.description
-        descriptionLabel.text = "최고: \(maxCelsiusStr) | 최저: \(minCelsiusStr)"
+        descriptionLabel.text = "최고: \(maxCelsiusString) | 최저: \(minCelsiusString)"
     }
 }

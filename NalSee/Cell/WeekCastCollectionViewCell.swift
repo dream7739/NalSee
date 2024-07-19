@@ -10,10 +10,10 @@ import Kingfisher
 import SnapKit
 
 final class WeekCastCollectionViewCell: BaseCollectionViewCell {
-    let weekDayLabel = UILabel()
-    let weatherImage = UIImageView()
-    let lowTempLabel = UILabel()
-    let highTempLabel = UILabel()
+    private let weekDayLabel = UILabel()
+    private let weatherImage = UIImageView()
+    private let lowTempLabel = UILabel()
+    private let highTempLabel = UILabel()
     
     override func configureHierarchy() {
         contentView.addSubview(weekDayLabel)
@@ -48,10 +48,8 @@ final class WeekCastCollectionViewCell: BaseCollectionViewCell {
     override func configureUI() {
         weekDayLabel.textColor = .white
         weekDayLabel.font = .systemFont(ofSize: 18)
-        
         lowTempLabel.textColor = .darkGray
         lowTempLabel.font = .systemFont(ofSize: 18)
-        
         highTempLabel.textColor = .white
         highTempLabel.font = .systemFont(ofSize: 18)
         
@@ -59,12 +57,10 @@ final class WeekCastCollectionViewCell: BaseCollectionViewCell {
     
     func configureData(_ data: WeekWeather){
         weekDayLabel.text = data.weekDay
-        
         let url = APIURL.weatherIcon + "/\(data.weather)@2x.png"
         guard let imageURL = URL(string: url) else { return }
         weatherImage.kf.setImage(with: imageURL)
-        
-        lowTempLabel.text = data.lowTemp
-        highTempLabel.text = data.highTemp
+        lowTempLabel.text = "최저 " + data.lowTemp
+        highTempLabel.text = "최고 " + data.highTemp
     }
 }

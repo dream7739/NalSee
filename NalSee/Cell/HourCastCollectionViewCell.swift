@@ -10,9 +10,9 @@ import Kingfisher
 import SnapKit
 
 final class HourCastCollectionViewCell: BaseCollectionViewCell {
-    let hourLabel = UILabel()
-    let weatherImage = UIImageView()
-    let tempLabel = UILabel()
+    private let hourLabel = UILabel()
+    private let weatherImage = UIImageView()
+    private let tempLabel = UILabel()
 
     override func configureHierarchy() {
         contentView.addSubview(hourLabel)
@@ -46,11 +46,9 @@ final class HourCastCollectionViewCell: BaseCollectionViewCell {
     
     func configureData(_ data: HourWeather){
         hourLabel.text = data.hour
-        
         let url = APIURL.weatherIcon + "/\(data.weather)@2x.png"
         guard let imageURL = URL(string: url) else { return }
         weatherImage.kf.setImage(with: imageURL)
-        
         tempLabel.text = data.temp
     }
 }

@@ -13,20 +13,11 @@ final class WeatherMainViewController: BaseViewController {
     
     static let tempSectionHeader = "tempSectionHeader"
     
-    let headerView = WeatherMainHeaderView()
-    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
-    var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
+    private let headerView = WeatherMainHeaderView()
+    private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+    private var dataSource: UICollectionViewDiffableDataSource<Section, Item>!
     
     let viewModel = WeatherMainViewModel()
-    
-    typealias Item = AnyHashable
-    
-    enum Section: String, CaseIterable {
-        case hour = "3시간 간격의 일기예보"
-        case week = "5일간의 일기예보"
-        case location = "위치"
-        case detail = ""
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,7 +45,6 @@ final class WeatherMainViewController: BaseViewController {
             make.top.equalTo(headerView.snp.bottom)
             make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-        
     }
     
     override func configureUI() {
@@ -62,7 +52,53 @@ final class WeatherMainViewController: BaseViewController {
         setUpToolbar()
     }
     
-    func setUpToolbar(){
+}
+
+extension WeatherMainViewController {
+    private func bind(){
+        viewModel.inputCoord.value = Coord(lat: 37.572601, lon: 126.979289)
+        
+        viewModel.outputUpdateTrigger.bind { [weak self] _ in
+            guard let result = self?.viewModel.currentWeatherResult else { return }
+            self?.headerView.configureData(result)
+        }
+        
+        viewModel.outputThreeHourResult.bind { [weak self] value in
+            guard var snapshot = self?.dataSource.snapshot() else { return }
+            let item = snapshot.itemIdentifiers(inSection: .hour)
+            snapshot.deleteItems(item)
+            snapshot.appendItems(value, toSection: .hour)
+            self?.dataSource.apply(snapshot)
+        }
+        
+        viewModel.outputFiveDayResult.bind { [weak self] value in
+            guard var snapshot = self?.dataSource.snapshot() else { return }
+            let item = snapshot.itemIdentifiers(inSection: .week)
+            snapshot.deleteItems(item)
+            snapshot.appendItems(value, toSection: .week)
+            self?.dataSource.apply(snapshot)
+        }
+        
+        viewModel.outputLocationResult.bind { [weak self] value in
+            guard var snapshot = self?.dataSource.snapshot() else { return }
+            let item = snapshot.itemIdentifiers(inSection: .location)
+            snapshot.deleteItems(item)
+            snapshot.appendItems(value, toSection: .location)
+            self?.dataSource.apply(snapshot)
+        }
+        
+        viewModel.outputDetailResult.bind { [weak self] value in
+            guard var snapshot = self?.dataSource.snapshot() else { return }
+            let item = snapshot.itemIdentifiers(inSection: .detail)
+            snapshot.deleteItems(item)
+            snapshot.appendItems(value, toSection: .detail)
+            self?.dataSource.apply(snapshot)
+        }
+    }
+}
+
+extension WeatherMainViewController {
+    private func setUpToolbar(){
         navigationController?.isToolbarHidden = false
         
         let appearance = UIToolbarAppearance()
@@ -82,75 +118,40 @@ final class WeatherMainViewController: BaseViewController {
     }
     
     @objc func mapButtonClicked(){
-        let mapVC = MapViewController()
+        let mapVC = WeatherMapViewController()
+        mapVC.coordSender = { value in
+            self.viewModel.inputCoord.value = value
+        }
         navigationController?.pushViewController(mapVC, animated: true)
     }
     
     @objc func searchButtonClicked(){
-        let searchVC = CitySearchViewController()
-        
+        let searchVC = WeatherCityViewController()
         searchVC.viewModel.coordSender = { value in
             self.viewModel.inputCoord.value = value
         }
-        
         navigationController?.pushViewController(searchVC, animated: true)
     }
-    
-    func bind(){
-        viewModel.getWeatherResult()
-        viewModel.getCurrentWeatherResult()
-        
-        viewModel.outputCurrentWeatherResult.bind { value in
-            guard let value else { return }
-            self.headerView.configureData(value)
-        }
-        
-        viewModel.outputThreeHourResult.bind { value in
-            var snapshot = self.dataSource.snapshot()
-            let item = snapshot.itemIdentifiers(inSection: .hour)
-            snapshot.deleteItems(item)
-            snapshot.appendItems(value, toSection: .hour)
-            self.dataSource.apply(snapshot)
-        }
-        
-        viewModel.outputFiveDayResult.bind { value in
-            var snapshot = self.dataSource.snapshot()
-            let item = snapshot.itemIdentifiers(inSection: .week)
-            snapshot.deleteItems(item)
-            snapshot.appendItems(value, toSection: .week)
-            self.dataSource.apply(snapshot)
-        }
-        
-        viewModel.outputLocationResult.bind { value in
-            var snapshot = self.dataSource.snapshot()
-            let item = snapshot.itemIdentifiers(inSection: .location)
-            snapshot.deleteItems(item)
-            snapshot.appendItems(value, toSection: .location)
-            self.dataSource.apply(snapshot)
-        }
-        
-        viewModel.outputDetailResult.bind { value in
-            var snapshot = self.dataSource.snapshot()
-            let item = snapshot.itemIdentifiers(inSection: .detail)
-            snapshot.deleteItems(item)
-            snapshot.appendItems(value, toSection: .detail)
-            self.dataSource.apply(snapshot)
-        }
-    }
-    
 }
 
 extension WeatherMainViewController {
-    func createLayout() -> UICollectionViewLayout {
+    typealias Item = AnyHashable
+    
+    enum Section: String, CaseIterable {
+        case hour = "3시간 간격의 일기예보"
+        case week = "5일간의 일기예보"
+        case location = "위치"
+        case detail = ""
+    }
+    
+    private func createLayout() -> UICollectionViewCompositionalLayout {
         let layout = UICollectionViewCompositionalLayout{ section, env in
             switch Section.allCases[section] {
             case .hour:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.2), heightDimension: .fractionalHeight(1.0))
-                
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(120))
-                
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -158,56 +159,45 @@ extension WeatherMainViewController {
                 section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
                 
                 let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-                
                 let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: WeatherMainViewController.tempSectionHeader, alignment: .top)
-                
                 section.boundarySupplementaryItems = [sectionHeader]
+                
                 return section
             case .week:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(44))
-                
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(440))
-                
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20)
                 
                 let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-                
                 let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: WeatherMainViewController.tempSectionHeader, alignment: .top)
-                
                 section.boundarySupplementaryItems = [sectionHeader]
                 
                 return section
             case .location:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
-                
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(240))
-                
                 let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
                 section.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 20, bottom: 0, trailing: 20)
                 
                 let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
-                
                 let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: WeatherMainViewController.tempSectionHeader, alignment: .top)
-                
                 section.boundarySupplementaryItems = [sectionHeader]
                 
                 return section
             case .detail:
                 let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalWidth(0.5))
-                
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
                 
                 let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(150))
-                
                 let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
                 
                 let section = NSCollectionLayoutSection(group: group)
@@ -224,7 +214,7 @@ extension WeatherMainViewController {
         return layout
     }
     
-    func configureDataSource(){
+    private func configureDataSource(){
         let hourCellRegisteration = UICollectionView.CellRegistration<HourCastCollectionViewCell, HourWeather>.init { cell, indexPath, itemIdentifier in
             cell.configureData(itemIdentifier)
         }

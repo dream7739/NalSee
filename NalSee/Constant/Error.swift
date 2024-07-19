@@ -7,14 +7,12 @@
 
 import Foundation
 
-enum JsonParseError: Error {
+enum JsonParseError: Error, LocalizedError {
     case failFileLocation
     case failDataParse
     case failDataDecoding
-}
-
-extension JsonParseError: LocalizedError {
-    public var errorDescription: String? {
+    
+    var errorDescription: String? {
         switch self {
         case .failFileLocation:
             return "파일을 찾을 수 없습니다."

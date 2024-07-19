@@ -9,9 +9,9 @@ import UIKit
 import SnapKit
 
 final class DetailCollectionViewCell: BaseCollectionViewCell {
-    let weatherImage = UIImageView()
-    let titleLabel = UILabel()
-    let descriptionLabel = UILabel()
+    private let weatherImage = UIImageView()
+    private let titleLabel = UILabel()
+    private let descriptionLabel = UILabel()
 
     override func configureHierarchy() {
         contentView.addSubview(weatherImage)
@@ -37,12 +37,9 @@ final class DetailCollectionViewCell: BaseCollectionViewCell {
     }
     
     override func configureUI() {
-        
         weatherImage.tintColor = .lightGray
-        
         titleLabel.textColor = .lightGray
         titleLabel.font = .systemFont(ofSize: 12)
-        
         descriptionLabel.textColor = .white
         descriptionLabel.font = .systemFont(ofSize: 23, weight: .medium)
         
